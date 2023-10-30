@@ -30,6 +30,7 @@ class _HomeScreenState extends State<HomeScreen> {
     Size size = Utils(context).getScreenSize;
     final productProviders = Provider.of<ProductProvider>(context);
     List<ProductModel> allProducts = productProviders.getProduct;
+    List<ProductModel> saleProduct = productProviders.isOnSaleProduct;
     return Scaffold(
       // appBar: AppBar(
       //   elevation: 0,
@@ -65,7 +66,7 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             TextButton(
               onPressed: () {
-                Navigator.pushNamed(context,OnsaleScreen.route);
+                Navigator.pushNamed(context, OnsaleScreen.route);
               },
               child: const TextDeco(
                 text: "View all",
@@ -103,10 +104,13 @@ class _HomeScreenState extends State<HomeScreen> {
                   child: SizedBox(
                     height: size.height * 0.24,
                     child: ListView.builder(
-                      itemCount: 10,
+                      itemCount: saleProduct.length<10?saleProduct.length:10,
                       scrollDirection: Axis.horizontal,
                       itemBuilder: (context, index) {
-                        return const CategorySale();
+                        return ChangeNotifierProvider.value(
+                          value: saleProduct[index],
+                          child: const CategorySale(),
+                        );
                       },
                     ),
                   ),
@@ -129,7 +133,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                   TextButton(
                     onPressed: () {
-                      Navigator.pushNamed(context,FeedsScreen.route);
+                      Navigator.pushNamed(context, FeedsScreen.route);
                     },
                     child: const TextDeco(
                       text: "Browse all",
@@ -141,22 +145,20 @@ class _HomeScreenState extends State<HomeScreen> {
                 ],
               ),
             ),
-               GridView.count(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                crossAxisCount: 2,
-                // crossAxisSpacing: 10,
-                childAspectRatio: size.width / (size.height * 0.59),
-                children: List.generate(allProducts.length<4?allProducts.length:4, (index) {
-              
-                 return  ChangeNotifierProvider.value(
+            GridView.count(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              crossAxisCount: 2,
+              // crossAxisSpacing: 10,
+              childAspectRatio: size.width / (size.height * 0.59),
+              children: List.generate(
+                  allProducts.length < 4 ? allProducts.length : 4, (index) {
+                return ChangeNotifierProvider.value(
                   value: allProducts[index],
-                   child: const ProductView(
-                     
-                   ),
-                 );
-                }),
-              ),
+                  child: const ProductView(),
+                );
+              }),
+            ),
           ],
         ),
       ),

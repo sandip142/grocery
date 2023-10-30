@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_iconly/flutter_iconly.dart';
+import 'package:grocery/Models/product_model.dart';
 import 'package:grocery/innerScreen/single_screen.dart';
 import 'package:grocery/services/utils.dart';
 import 'package:grocery/widgets/heart_btn.dart';
 import 'package:grocery/widgets/prize_widget.dart';
 import 'package:grocery/widgets/text_deco.dart';
 import 'package:fancy_shimmer_image/fancy_shimmer_image.dart';
+import 'package:provider/provider.dart';
 
 class CategorySale extends StatefulWidget {
   const CategorySale({super.key});
@@ -31,6 +33,7 @@ class _CategorySaleState extends State<CategorySale> {
     final Color color = Utils(context).color;
     final theme = Utils(context).getTheme;
     Size size = Utils(context).getScreenSize;
+    final allProducts = Provider.of<ProductModel>(context);
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Material(
@@ -52,7 +55,7 @@ class _CategorySaleState extends State<CategorySale> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     FancyShimmerImage(
-                      imageUrl: 'https://i.ibb.co/F0s3FHQ/Apricots.png',
+                      imageUrl: allProducts.imageUrl,
                       width: size.width * 0.22,
                       height: size.width * 0.22,
                       boxFit: BoxFit.fill,
@@ -60,7 +63,7 @@ class _CategorySaleState extends State<CategorySale> {
                     Column(
                       children: [
                         TextDeco(
-                          text: '1KG',
+                          text: allProducts.isPiece?'1Piece':'1KG',
                           color: color,
                           textsize: 22,
                           istitle: true,
@@ -85,13 +88,13 @@ class _CategorySaleState extends State<CategorySale> {
                     ),
                   ],
                 ),
-                PrizeWidget(salePrize: 2.59, prize: 3.59, textprize: '1', onSale: true),
+                PrizeWidget(salePrize:allProducts.salePrice, prize: allProducts.price, textprize: '1', onSale:allProducts.isOnSale),
                 const SizedBox(
                   height: 5,
                 ),
                 FittedBox(
                   child: TextDeco(
-                    text: "product title",
+                    text: allProducts.title,
                     textsize: 20,
                     color: color,
                     istitle: true,
