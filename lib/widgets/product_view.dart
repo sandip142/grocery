@@ -57,7 +57,7 @@ class _ProductViewState extends State<ProductView> {
         color: Theme.of(context).cardColor,
         child: InkWell(
           onTap: () {
-            Navigator.pushNamed(context, SingleScreen.route);
+            Navigator.pushNamed(context, SingleScreen.route,arguments: allProducts.id);
           },
           borderRadius: BorderRadius.circular(12),
           child: Column(children: [

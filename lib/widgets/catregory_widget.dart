@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:grocery/Models/product_model.dart';
+import 'package:grocery/innerScreen/cat_screen.dart';
 import 'package:grocery/provider/darktheme_provider.dart';
 import 'package:grocery/widgets/text_deco.dart';
 import 'package:provider/provider.dart';
@@ -17,9 +19,11 @@ class CategoryWidget extends StatelessWidget {
     final themeStatus = Provider.of<DarkThemeProvider>(context);
     final Color color = themeStatus.getDarkTheme ? Colors.white : Colors.black;
     double _screenWidth = MediaQuery.of(context).size.width;
+    
+    
     return InkWell(
       onTap: () {
-        print('yes its work');
+        Navigator.pushNamed(context,CategoryScreen.route,arguments: imgTittle);
       },
       child: Container(
         decoration: BoxDecoration(

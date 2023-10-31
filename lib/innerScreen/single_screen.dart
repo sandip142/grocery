@@ -3,10 +3,13 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_iconly/flutter_iconly.dart';
+import 'package:grocery/Models/product_model.dart';
+import 'package:grocery/providers/product_provider.dart';
 import 'package:grocery/services/utils.dart';
 import 'package:grocery/widgets/heart_btn.dart';
 //import 'package:grocery/widgets/prize_widget.dart';
 import 'package:grocery/widgets/text_deco.dart';
+import 'package:provider/provider.dart';
 
 class SingleScreen extends StatefulWidget {
   static const route = '/SingleScreen';
@@ -30,7 +33,11 @@ class _SingleScreenState extends State<SingleScreen> {
   Widget build(BuildContext context) {
     Size size = Utils(context).getScreenSize;
     final Color color = Utils(context).color;
-
+   final productProviders = Provider.of<ProductProvider>(context);
+    final productmodal=ModalRoute.of(context)!.settings.arguments as String;  //to get the value from parent screen or  to get productId which where pass in Navigator.pusNamed
+    final getCurrent =productProviders.detailedProduct(productmodal); //put id which get from parent class
+    double usedPrice=getCurrent.isOnSale?getCurrent.salePrice:getCurrent.price;
+    double totalPrice=(usedPrice*int.parse(_quantityTextController.text));
     return Scaffold(
       appBar: AppBar(
           leading: InkWell(
@@ -49,7 +56,7 @@ class _SingleScreenState extends State<SingleScreen> {
         Flexible(
           flex: 2,
           child: FancyShimmerImage(
-            imageUrl: 'https://i.ibb.co/F0s3FHQ/Apricots.png',
+            imageUrl: getCurrent.imageUrl,
             boxFit: BoxFit.scaleDown,
             width: size.width,
             // height: screenHeight * .4,
@@ -75,7 +82,7 @@ class _SingleScreenState extends State<SingleScreen> {
                     children: [
                       Flexible(
                         child: TextDeco(
-                          text: 'title',
+                          text: getCurrent.title,
                           color: color,
                           textsize: 25,
                           istitle: true,
@@ -91,14 +98,14 @@ class _SingleScreenState extends State<SingleScreen> {
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      const TextDeco(
-                        text: '\$2.59',
+                       TextDeco(
+                        text: '\$${usedPrice.toString()}/',
                         color: Colors.green,
                         textsize: 22,
                         istitle: true,
                       ),
                       TextDeco(
-                        text: '/Kg',
+                        text: getCurrent.isPiece?'Piece':"/kg",
                         color: color,
                         textsize: 12,
                         istitle: false,
@@ -107,9 +114,9 @@ class _SingleScreenState extends State<SingleScreen> {
                         width: 10,
                       ),
                       Visibility(
-                        visible: true,
+                        visible:getCurrent.isOnSale?true:false,
                         child: Text(
-                          '\$3.9',
+                          '\$${getCurrent.salePrice}',
                           style: TextStyle(
                               fontSize: 15,
                               color: color,
@@ -230,7 +237,7 @@ class _SingleScreenState extends State<SingleScreen> {
                               child: Row(
                                 children: [
                                   TextDeco(
-                                    text: '\$2.59/',
+                                    text: '\$${totalPrice.toStringAsFixed(2)}/',
                                     color: color,
                                     textsize: 20,
                                     istitle: true,

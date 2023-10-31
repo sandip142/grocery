@@ -1,15 +1,29 @@
 import 'package:flutter/material.dart';
 import 'package:grocery/Models/product_model.dart';
 
-class ProductProvider with ChangeNotifier{
-
- List<ProductModel> get getProduct{
+class ProductProvider with ChangeNotifier {
+  List<ProductModel> get getProduct {
     return productsList;
   }
 
-List<ProductModel> get isOnSaleProduct{
-  return productsList.where((element) => element.isOnSale).toList();
-}
+  List<ProductModel> get isOnSaleProduct {
+    return productsList.where((element) => element.isOnSale).toList();
+  }
+
+  ProductModel detailedProduct(String productId) {
+    return productsList.firstWhere((element) => element.id == productId);
+  }
+
+  List<ProductModel> categoryInfo(String categoryId) {
+    List<ProductModel> _getCategoty = productsList
+        .where(
+          (element) => element.productCategoryName.toLowerCase().contains(
+                categoryId.toLowerCase(),
+              ),
+        )
+        .toList();
+        return _getCategoty;
+  }
 
   static final List<ProductModel> productsList = [
     ProductModel(
@@ -296,5 +310,4 @@ List<ProductModel> get isOnSaleProduct{
       isPiece: false,
     ),
   ];
-
 }

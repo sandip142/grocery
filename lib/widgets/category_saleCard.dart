@@ -42,7 +42,7 @@ class _CategorySaleState extends State<CategorySale> {
         child: InkWell(
           borderRadius: BorderRadius.circular(12),
           onTap: () {
-             Navigator.pushNamed(context,SingleScreen.route); 
+             Navigator.pushNamed(context,SingleScreen.route,arguments: allProducts.id); 
           },
           onDoubleTap: onLike,
           child: Padding(
