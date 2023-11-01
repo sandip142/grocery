@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:grocery/Models/product_model.dart';
 import 'package:grocery/innerScreen/single_screen.dart';
+import 'package:grocery/providers/cart_provider.dart';
 //import 'package:flutter_iconly/flutter_iconly.dart';
 import 'package:grocery/services/utils.dart';
 import 'package:grocery/widgets/heart_btn.dart';
@@ -49,7 +50,7 @@ class _ProductViewState extends State<ProductView> {
     final Color color = Utils(context).color;
     Size size = Utils(context).getScreenSize;
     final allProducts = Provider.of<ProductModel>(context);
-
+    final cartProvider = Provider.of<CartProvider>(context);
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Material(
@@ -57,7 +58,8 @@ class _ProductViewState extends State<ProductView> {
         color: Theme.of(context).cardColor,
         child: InkWell(
           onTap: () {
-            Navigator.pushNamed(context, SingleScreen.route,arguments: allProducts.id);
+            Navigator.pushNamed(context, SingleScreen.route,
+                arguments: allProducts.id);
           },
           borderRadius: BorderRadius.circular(12),
           child: Column(children: [
@@ -146,7 +148,12 @@ class _ProductViewState extends State<ProductView> {
             SizedBox(
               width: double.infinity,
               child: TextButton(
-                onPressed: () {},
+                onPressed: () {
+                  cartProvider.addProductToCart(
+                    productId: allProducts.id,
+                    quantity: int.parse(_quantityTextController.text),
+                  );
+                },
                 child: TextDeco(
                   text: 'Add to cart',
                   maxLines: 1,

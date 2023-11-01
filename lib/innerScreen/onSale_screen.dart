@@ -13,7 +13,7 @@ class OnsaleScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    bool isEmpty = true;
+   // bool isEmpty = true;
     final Color color = Utils(context).color;
     Size size = Utils(context).getScreenSize;
     //provider for sale widget to fetch the equichangeble data that shows the State managment

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_iconly/flutter_iconly.dart';
 import 'package:grocery/Models/product_model.dart';
 import 'package:grocery/innerScreen/single_screen.dart';
+import 'package:grocery/providers/cart_provider.dart';
 import 'package:grocery/services/utils.dart';
 import 'package:grocery/widgets/heart_btn.dart';
 import 'package:grocery/widgets/prize_widget.dart';
@@ -34,6 +35,7 @@ class _CategorySaleState extends State<CategorySale> {
     final theme = Utils(context).getTheme;
     Size size = Utils(context).getScreenSize;
     final allProducts = Provider.of<ProductModel>(context);
+    final cartProvider = Provider.of<CartProvider>(context);
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Material(
@@ -42,7 +44,8 @@ class _CategorySaleState extends State<CategorySale> {
         child: InkWell(
           borderRadius: BorderRadius.circular(12),
           onTap: () {
-             Navigator.pushNamed(context,SingleScreen.route,arguments: allProducts.id); 
+            Navigator.pushNamed(context, SingleScreen.route,
+                arguments: allProducts.id);
           },
           onDoubleTap: onLike,
           child: Padding(
@@ -63,7 +66,7 @@ class _CategorySaleState extends State<CategorySale> {
                     Column(
                       children: [
                         TextDeco(
-                          text: allProducts.isPiece?'1Piece':'1KG',
+                          text: allProducts.isPiece ? '1Piece' : '1KG',
                           color: color,
                           textsize: 22,
                           istitle: true,
@@ -74,21 +77,30 @@ class _CategorySaleState extends State<CategorySale> {
                         Row(
                           children: [
                             GestureDetector(
-                              onTap: () {},
+                              onTap: () {
+                                cartProvider.addProductToCart(
+                                  productId: allProducts.id,
+                                  quantity: 1,
+                                );
+                              },
                               child: Icon(
                                 IconlyLight.bag2,
                                 size: 22,
                                 color: color,
                               ),
                             ),
-                           HeartBtn(onLike: onLike,value:isColor)
+                            HeartBtn(onLike: onLike, value: isColor)
                           ],
                         ),
                       ],
                     ),
                   ],
                 ),
-                PrizeWidget(salePrize:allProducts.salePrice, prize: allProducts.price, textprize: '1', onSale:allProducts.isOnSale),
+                PrizeWidget(
+                    salePrize: allProducts.salePrice,
+                    prize: allProducts.price,
+                    textprize: '1',
+                    onSale: allProducts.isOnSale),
                 const SizedBox(
                   height: 5,
                 ),
