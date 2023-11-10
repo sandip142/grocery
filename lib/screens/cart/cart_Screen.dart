@@ -16,7 +16,7 @@ class CartScreen extends StatelessWidget {
     final Color color = Utils(context).color;
     //Size size = Utils(context).getScreenSize;
     final cartProvider = Provider.of<CartProvider>(context);
-    final cartItem = cartProvider.getCartItems.values.toList();
+    final cartItem = cartProvider.getCartItems.values.toList().reversed.toList();
     return cartItem.isEmpty
         ? const EmptyScreen(
             title: 'You didnt place any order yet',
@@ -32,7 +32,9 @@ class CartScreen extends StatelessWidget {
                 IconButton(
                   onPressed: () {
                     GlobalMethod.signoutDialog(
-                        context: context, tittle: 'are You Sure', fct: () {});
+                        context: context, tittle: 'are You Sure', fct: () {
+                          cartProvider.clearCart();
+                        });
                   },
                   icon: const Icon(
                     Icons.delete,
@@ -97,7 +99,10 @@ class CartScreen extends StatelessWidget {
                     itemBuilder: (context, index) {
                       return ChangeNotifierProvider.value(
                         value: cartItem[index],
-                        child: const CartWidget(),
+                        child:  CartWidget(
+                          q: cartItem[index].quantity,
+                        ),
+                        
                       );
                     },
                   ),

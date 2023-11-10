@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:grocery/Models/cat_model.dart';
 import 'package:grocery/innerScreen/single_screen.dart';
+import 'package:grocery/providers/cart_provider.dart';
 import 'package:grocery/providers/product_provider.dart';
 import 'package:grocery/services/utils.dart';
 import 'package:grocery/widgets/heart_btn.dart';
@@ -12,7 +13,8 @@ import 'package:grocery/widgets/text_deco.dart';
 import 'package:provider/provider.dart';
 
 class CartWidget extends StatefulWidget {
-  const CartWidget({super.key});
+  const CartWidget({super.key, required this.q});
+  final int q;
 
   @override
   State<CartWidget> createState() => _CartWidgetState();
@@ -24,7 +26,7 @@ class _CartWidgetState extends State<CartWidget> {
   @override
   void initState() {
     // TODO: implement initState
-    _itemcontroller.text = '1';
+    _itemcontroller.text = widget.q.toString();
     super.initState();
   }
 
@@ -46,35 +48,38 @@ class _CartWidgetState extends State<CartWidget> {
     });
   }
 
-  void _addnumber() {
-    setState(() {
-      _itemcontroller.text = (int.parse(_itemcontroller.text) + 1).toString();
-    });
-  }
+  // void _addnumber() {
+  //   setState(() {
+  //     _itemcontroller.text = (int.parse(_itemcontroller.text) + 1).toString();
+  //   });
+  // }
 
-  void _minusnumber() {
-    setState(() {
-      if (int.parse(_itemcontroller.text) != 1) {
-        _itemcontroller.text = (int.parse(_itemcontroller.text) - 1).toString();
-      } else {
-        _itemcontroller.text = '1';
-      }
-    });
-  }
+  // void _minusnumber() {
+  //   setState(() {
+  //     if (int.parse(_itemcontroller.text) != 1) {
+  //       _itemcontroller.text = (int.parse(_itemcontroller.text) - 1).toString();
+  //     } else {
+  //       _itemcontroller.text = widget.q.toString();
+  //     }
+  //   });
+  // }
 
   @override
   Widget build(BuildContext context) {
     final Color color = Utils(context).color;
     Size size = Utils(context).getScreenSize;
     final productProviders = Provider.of<ProductProvider>(context);
-     final cartModal = Provider.of<CartModel>(context);
-    final getCurrent =productProviders.detailedProduct(cartModal.productId); //put id which get from parent class
-    double usedPrice=getCurrent.isOnSale?getCurrent.salePrice:getCurrent.price;
-    
+    final cartModal = Provider.of<CartModel>(context);
+    final getCurrent = productProviders.detailedProduct(
+        cartModal.productId); //put id which get from parent class
+    double usedPrice =
+        getCurrent.isOnSale ? getCurrent.salePrice : getCurrent.price;
+    final cartProvider = Provider.of<CartProvider>(context);
+
     return GestureDetector(
       onTap: () {
         Navigator.pushNamed(
-            context, SingleScreen.route); //add path of SingleScree here
+            context, SingleScreen.route,arguments: cartModal.productId); //add path of SingleScree here
       },
       child: Row(
         children: [
@@ -120,7 +125,19 @@ class _CartWidgetState extends State<CartWidget> {
                               buttonForOPeration(
                                 color: Colors.red,
                                 icon: CupertinoIcons.minus,
-                                fct: _minusnumber,
+                                fct: () {
+                                  if (_itemcontroller.text == '1') {
+                                    return;
+                                  } else {
+                                    cartProvider.reduceProductByOne(
+                                        cartModal.productId);
+                                    setState(() {
+                                      _itemcontroller.text =
+                                          (int.parse(_itemcontroller.text) - 1)
+                                              .toString();
+                                    });
+                                  }
+                                },
                               ),
                               Flexible(
                                 flex: 1,
@@ -151,7 +168,15 @@ class _CartWidgetState extends State<CartWidget> {
                               buttonForOPeration(
                                 color: Colors.green,
                                 icon: Icons.plus_one,
-                                fct: _addnumber,
+                                fct: () {
+                                  cartProvider.increaseProductByOne(
+                                      cartModal.productId);
+                                  setState(() {
+                                    _itemcontroller.text =
+                                        (int.parse(_itemcontroller.text) + 1)
+                                            .toString();
+                                  });
+                                },
                               ),
                             ],
                           ),
@@ -164,7 +189,9 @@ class _CartWidgetState extends State<CartWidget> {
                       child: Column(
                         children: [
                           InkWell(
-                            onTap: () {},
+                            onTap: () {
+                              cartProvider.removeItem(cartModal.productId);
+                            },
                             child: const Icon(
                               CupertinoIcons.cart_badge_minus,
                               color: Colors.red,

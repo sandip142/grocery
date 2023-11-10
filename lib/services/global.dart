@@ -34,7 +34,13 @@ class GlobalMethod{
                 ),
               ),
               TextButton(
-                onPressed: fct,
+                onPressed:(){
+                  fct(); //change happens in child folder
+                  if(Navigator.canPop(context))
+                  {
+                    Navigator.pop(context);
+                  }
+                },
                 child: const TextDeco(
                   text: "delete",
                   textsize: 20,

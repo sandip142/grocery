@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_iconly/flutter_iconly.dart';
 import 'package:grocery/Models/product_model.dart';
+import 'package:grocery/providers/cart_provider.dart';
 
 import 'package:grocery/providers/product_provider.dart';
 import 'package:grocery/services/utils.dart';
@@ -40,6 +41,7 @@ class _CategoryScreen extends State<CategoryScreen> {
     final productProviders = Provider.of<ProductProvider>(context);
     final categoryId=ModalRoute.of(context)!.settings.arguments as String;
     List<ProductModel> allProducts = productProviders.categoryInfo(categoryId);
+    
     
     return Scaffold(
       appBar: AppBar(

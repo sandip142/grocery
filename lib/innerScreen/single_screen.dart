@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_iconly/flutter_iconly.dart';
+import 'package:grocery/providers/cart_provider.dart';
 import 'package:grocery/providers/product_provider.dart';
 import 'package:grocery/services/utils.dart';
 import 'package:grocery/widgets/heart_btn.dart';
@@ -32,11 +33,16 @@ class _SingleScreenState extends State<SingleScreen> {
   Widget build(BuildContext context) {
     Size size = Utils(context).getScreenSize;
     final Color color = Utils(context).color;
-   final productProviders = Provider.of<ProductProvider>(context);
-    final productmodal=ModalRoute.of(context)!.settings.arguments as String;  //to get the value from parent screen or  to get productId which where pass in Navigator.pusNamed
-    final getCurrent =productProviders.detailedProduct(productmodal); //put id which get from parent class
-    double usedPrice=getCurrent.isOnSale?getCurrent.salePrice:getCurrent.price;
-    double totalPrice=(usedPrice*int.parse(_quantityTextController.text));
+    final productProviders = Provider.of<ProductProvider>(context);
+    final productmodal = ModalRoute.of(context)!.settings.arguments
+        as String; //to get the value from parent screen or  to get productId which where pass in Navigator.pusNamed
+    final getCurrent = productProviders
+        .detailedProduct(productmodal); //put id which get from parent class
+    double usedPrice =
+        getCurrent.isOnSale ? getCurrent.salePrice : getCurrent.price;
+    double totalPrice = (usedPrice * int.parse(_quantityTextController.text));
+    // final cartModal = Provider.of<CartModel>(context);
+    final cartProvider = Provider.of<CartProvider>(context);
     return Scaffold(
       appBar: AppBar(
           leading: InkWell(
@@ -87,7 +93,7 @@ class _SingleScreenState extends State<SingleScreen> {
                           istitle: true,
                         ),
                       ),
-                       HeartBtn(onLike: (){})
+                      HeartBtn(onLike: () {})
                     ],
                   ),
                 ),
@@ -97,14 +103,14 @@ class _SingleScreenState extends State<SingleScreen> {
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                       TextDeco(
+                      TextDeco(
                         text: '\$${usedPrice.toString()}/',
                         color: Colors.green,
                         textsize: 22,
                         istitle: true,
                       ),
                       TextDeco(
-                        text: getCurrent.isPiece?'Piece':"/kg",
+                        text: getCurrent.isPiece ? 'Piece' : "/kg",
                         color: color,
                         textsize: 12,
                         istitle: false,
@@ -113,7 +119,7 @@ class _SingleScreenState extends State<SingleScreen> {
                         width: 10,
                       ),
                       Visibility(
-                        visible:getCurrent.isOnSale?true:false,
+                        visible: getCurrent.isOnSale ? true : false,
                         child: Text(
                           '\$${getCurrent.salePrice}',
                           style: TextStyle(
@@ -192,7 +198,7 @@ class _SingleScreenState extends State<SingleScreen> {
                       width: 5,
                     ),
                     quantityControl(
-                      fct: () {
+                      fct: () {                    
                         setState(() {
                           _quantityTextController.text =
                               (int.parse(_quantityTextController.text) + 1)
@@ -261,7 +267,12 @@ class _SingleScreenState extends State<SingleScreen> {
                           color: Colors.green,
                           borderRadius: BorderRadius.circular(10),
                           child: InkWell(
-                            onTap: () {},
+                            onTap: () {
+                              cartProvider.addProductToCart(
+                                  productId: getCurrent.id,
+                                  quantity:
+                                      int.parse(_quantityTextController.text));
+                            },
                             borderRadius: BorderRadius.circular(10),
                             child: Padding(
                               padding: const EdgeInsets.all(12.0),
